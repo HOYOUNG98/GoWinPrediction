@@ -1,3 +1,6 @@
-autopep8==1.5.7
-pycodestyle==2.7.0
-toml==0.10.2
+joblib==1.0.1
+numpy==1.21.2
+scikit-learn==1.0
+scipy==1.7.1
+sklearn==0.0
+threadpoolctl==2.2.0
