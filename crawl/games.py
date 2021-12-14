@@ -5,8 +5,8 @@ from tqdm import tqdm
 import time
 import csv
 
-START_YEAR = 2005
-NUM_YEAR = 16
+START_YEAR = 2002
+NUM_YEAR = 20
 NUM_LOAD_PER_REQUEST = 10
 
 
