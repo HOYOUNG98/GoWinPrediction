@@ -11,6 +11,8 @@ def win_rate(df, player):
     df['win_rate'] = df['cum_sum']/df['num_games']
     df['win_rate'] = df['win_rate'].shift()
 
+    df['num_games'] = df['num_games'].shift()
+
     df = df.apply(assign_win_rate, player=player, axis=1)
     return df
 
@@ -18,8 +20,10 @@ def win_rate(df, player):
 def assign_win_rate(x, player):
     if player == x['win_name']:
         x['PWR'] = x['win_rate']
+        x['PNG'] = x['num_games']
     else:
         x['OWR'] = x['win_rate']
+        x['ONG'] = x['num_games']
     return x
 
 
@@ -28,7 +32,7 @@ if __name__ == "__main__":
 
     games_df.sort_values(by=['date'], inplace=True, ignore_index=True)
 
-    games_df['PWR'], games_df['OWR'] = 0, 0
+    games_df['PWR'], games_df['OWR'], games_df['PNG'], games_df['ONG'] = 0, 0, 0, 0
 
     for player in tqdm(games_df.win_name.unique()):
         filtered_df = games_df.loc[
