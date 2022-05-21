@@ -1,4 +1,3 @@
-import pandas as pd
 from tqdm import tqdm
 
 
@@ -13,33 +12,26 @@ def win_rate(df, player):
 
     df['num_games'] = df['num_games'].shift()
 
+    def assign_win_rate(x, player):
+        if player == x['win_name']:
+            x['PWR'] = x['win_rate']
+            x['PNG'] = x['num_games']
+        else:
+            x['OWR'] = x['win_rate']
+            x['ONG'] = x['num_games']
+        return x
+
     df = df.apply(assign_win_rate, player=player, axis=1)
     return df
 
 
-def assign_win_rate(x, player):
-    if player == x['win_name']:
-        x['PWR'] = x['win_rate']
-        x['PNG'] = x['num_games']
-    else:
-        x['OWR'] = x['win_rate']
-        x['ONG'] = x['num_games']
-    return x
+def add_win_rate_features(df):
+    df['PWR'], df['OWR'], df['PNG'], df['ONG'] = 0, 0, 0, 0
 
+    for player in tqdm(df.win_name.unique()):
+        filtered_df = df.loc[(df.win_name == player) |
+                             (df.lose_name == player)].copy()
 
-if __name__ == "__main__":
-    games_df = pd.read_csv("../../data/processed/v2.csv")
+        df.update(win_rate(filtered_df, player))
 
-    games_df.sort_values(by=['date'], inplace=True, ignore_index=True)
-
-    games_df['PWR'], games_df['OWR'], games_df['PNG'], games_df['ONG'] = 0, 0, 0, 0
-
-    for player in tqdm(games_df.win_name.unique()):
-        filtered_df = games_df.loc[
-            (games_df.win_name == player) | (games_df.lose_name == player)
-        ].copy()
-
-        df = win_rate(filtered_df, player)
-        games_df.update(df)
-
-    games_df.to_csv("../../data/processed/v2.csv", index=False)
+    return df

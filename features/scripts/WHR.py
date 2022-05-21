@@ -21,18 +21,14 @@ def convergeWHR(df):
     return whr
 
 
-if __name__ == "__main__":
-    games_df = pd.read_csv("../../data/processed/v2.csv")
+def add_WHR_features(df):
+    whr = convergeWHR(df)
 
-    games_df.sort_values(by=['date'], inplace=True, ignore_index=True)
+    df['PWHR'], df['PWHR-Error'], df['OWHR'], df['OWHR-Error'] = 0, 0, 0, 0
+    for player in tqdm(df.win_name.unique()):
+        winner_df = df.loc[df.win_name == player].copy()
 
-    whr = convergeWHR(games_df)
-
-    games_df['WWHR'], games_df['WWHR-Error'], games_df['LWHR'], games_df['LWHR-Error'] = 0, 0, 0, 0
-    for player in tqdm(games_df.win_name.unique()):
-        winner_df = games_df.loc[games_df.win_name == player].copy()
-
-        loser_df = games_df.loc[games_df.lose_name == player].copy()
+        loser_df = df.loc[df.lose_name == player].copy()
 
         rating_map, uncertainty_map = {}, {}
         for days, rating, uncertainty in whr.ratings_for_player(player):
@@ -49,7 +45,7 @@ if __name__ == "__main__":
         loser_df['LWHR'] = loser_df['date'].map(rating_map).shift()
         loser_df['LWHR-Error'] = loser_df['date'].map(uncertainty_map).shift()
 
-        games_df.update(winner_df)
-        games_df.update(loser_df)
+        df.update(winner_df)
+        df.update(loser_df)
 
-    games_df.to_csv("../../data/processed/v3.csv", index=False)
+    return df

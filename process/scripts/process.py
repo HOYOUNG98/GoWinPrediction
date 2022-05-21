@@ -18,13 +18,13 @@ if __name__ == "__main__":
                 continue
 
             games.append({
-                'win_name': game.get_player_name(winner),
-                'lose_name': game.get_player_name(loser),
-                'win_color': winner,
-                'lose_color': loser,
+                'player': game.get_player_name(winner),
+                'opponent': game.get_player_name(loser),
+                'player_color': winner,
+                'opponent_color': loser,
                 'date': game.get_root().get('DT'),
-                'win_rank': game.get_root().get(f'{winner.upper()}R'),
-                'lose_rank': game.get_root().get(f'{loser.upper()}R'),
+                'player_rank': game.get_root().get(f'{winner.upper()}R'),
+                'player_rank': game.get_root().get(f'{loser.upper()}R'),
                 'komi': game.get_root().get('KM')
             })
 
